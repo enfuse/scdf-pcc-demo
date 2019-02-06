@@ -37,7 +37,7 @@ services:
       - ./docker/postgres/initdb:/docker-entrypoint-initdb.d
 
   rabbitmq:
-    image: 'rabbitmq:3-management'
+    image: rabbitmq:3-management
     container_name: rabbitmq
     depends_on: [dns]
     dns: [172.19.0.2]
