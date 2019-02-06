@@ -24,6 +24,7 @@ services:
     image: postgres:9.6
     depends_on: [dns]
     dns: [172.19.0.2]
+    container_name: postgres
     networks:
       default:
         aliases: [db1.localhost]
@@ -73,6 +74,7 @@ services:
   scdf-config:
     image: alpine
     depends_on: [dns, scdf]
+    container_name: scdf-config
     volumes:
       - ./docker:/docker
     command: docker/scdf/setup.sh
