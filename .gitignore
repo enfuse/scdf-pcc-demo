@@ -1,0 +1,14 @@
+### Generated files
+.DS_Store
+.gradle
+**/build/
+**/out/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+.envrc
+build.sh
