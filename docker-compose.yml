@@ -1,0 +1,78 @@
+version: '3.2'
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.19.0.0/24
+
+services:
+  dns:
+    image: coredns/coredns:1.2.0
+    command: -conf /etc/coredns/Corefile
+    container_name: dns
+    networks:
+      default:
+        ipv4_address: 172.19.0.2
+        aliases: [ns1.localhost]
+    ports:
+      - "5300:53/udp"
+    volumes:
+      - ./docker/dns:/etc/coredns
+
+  postgres:
+    image: postgres:9.6
+    depends_on: [dns]
+    dns: [172.19.0.2]
+    networks:
+      default:
+        aliases: [db1.localhost]
+    ports:
+      - "5432:5432"
+    # environment:
+      # - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      # - ./pgdata:/var/lib/postgresql/data/pgdata
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d
+
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    container_name: rabbitmq
+    depends_on: [dns]
+    dns: [172.19.0.2]
+    networks:
+      default:
+        aliases: [rabbitmq.localhost]
+    ports:
+      - "15672:15672"
+
+  scdf:
+    image: springcloud/spring-cloud-dataflow-server-local:1.7.3.RELEASE
+    container_name: scdf
+    depends_on: [dns, postgres, rabbitmq]
+    dns: [172.19.0.2]
+    networks:
+      default:
+        aliases: [dataflow.localhost]
+    ports:
+      - "9393:9393"
+      - "9995-9998:9995-9998"
+    volumes:
+      - ~/.m2:/root/.m2
+    environment:
+      - spring.cloud.deployer.local.javaOpts=-Dspring.profiles.active=docker
+      - spring.cloud.dataflow.applicationProperties.stream.spring.profiles.include=docker
+
+      - spring.cloud.dataflow.applicationProperties.stream.spring.rabbitmq.host=rabbitmq.localhost
+
+      - spring.datasource.url=jdbc:postgresql://db1.localhost:5432/scdf
+      - spring.datasource.username=scdf
+      - spring.datasource.password=scdf
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+
+  scdf-config:
+    image: alpine
+    depends_on: [dns, scdf]
+    volumes:
+      - ./docker:/docker
+    command: docker/scdf/setup.sh
