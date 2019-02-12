@@ -1,8 +1,9 @@
-package com.example.gemfire;
+package com.example.gemfire.configuration;
 
 //@Configuration
 //@EnableGemfireFunctionExecutions(basePackages = "com.example.gemfire")
 
+import com.example.gemfire.domain.ExampleRegion;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.springframework.context.annotation.Bean;

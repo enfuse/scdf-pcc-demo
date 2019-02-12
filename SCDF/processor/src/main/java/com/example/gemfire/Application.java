@@ -1,5 +1,6 @@
 package com.example.gemfire;
 
+import com.example.gemfire.domain.ExampleRegion;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.gemfire.config.annotation.*;

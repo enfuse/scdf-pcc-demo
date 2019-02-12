@@ -1,4 +1,4 @@
-package com.example.gemfire;
+package com.example.gemfire.domain;
 
 
 import org.apache.geode.pdx.PdxReader;
