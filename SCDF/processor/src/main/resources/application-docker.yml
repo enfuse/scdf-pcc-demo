@@ -1,0 +1,10 @@
+spring:
+  data:
+    gemfire:
+      cache:
+        log-level: config
+        locator:
+          port: 11334
+
+gemfire-properties:
+  region-name: exampleRegion

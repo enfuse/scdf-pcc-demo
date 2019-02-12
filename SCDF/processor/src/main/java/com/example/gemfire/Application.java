@@ -1,24 +1,16 @@
 package com.example.gemfire;
 
-import com.example.gemfire.domain.ExampleRegion;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.gemfire.config.annotation.*;
+import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
+import org.springframework.data.gemfire.config.annotation.EnableContinuousQueries;
 
 @SpringBootApplication
-@ClientCacheApplication(readyForEvents = true,
-        subscriptionEnabled = true, logLevel ="debug", locators = {
-        @ClientCacheApplication.Locator(host = "localhost", port = 10334)})
 @EnableContinuousQueries
-@EnableAutoRegionLookup
-@EnableEntityDefinedRegions(basePackageClasses = ExampleRegion.class)
-//@EnableGemfireRepositories
-//@EnableGemfireCaching
-//@EnableCachingDefinedRegions
-
-
+@ClientCacheApplication(name = "CQConsumerClientCache", logLevel = "info", pingInterval = 5000L, readTimeout = 15000,
+        retryAttempts = 1, subscriptionEnabled = true, locators = @ClientCacheApplication.Locator,
+        readyForEvents = true, durableClientId = "22", durableClientTimeout = 5)
 public class Application {
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
