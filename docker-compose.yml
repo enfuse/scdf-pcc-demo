@@ -73,6 +73,7 @@ services:
   server:
     image: apachegeode/geode
     container_name: server
+    hostname: server.localhost
     depends_on: [dns, locator]
     dns: [172.19.0.2]
     networks:
