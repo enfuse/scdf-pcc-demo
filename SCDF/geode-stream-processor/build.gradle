@@ -21,16 +21,19 @@ sourceCompatibility = '1.8'
 repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/libs-snapshot'}
 }
 
 ext {
     set('springCloudVersion', 'Greenwich.RELEASE')
+    geodeStarterVersion = '1.0.0.M3'
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.cloud:spring-cloud-stream'
     implementation 'org.springframework.cloud:spring-cloud-stream-binder-rabbit'
+    implementation "org.springframework.geode:spring-geode-starter:${geodeStarterVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
 }
