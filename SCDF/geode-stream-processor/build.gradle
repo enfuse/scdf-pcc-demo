@@ -38,6 +38,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.cloud:spring-cloud-stream-test-support")
+//    testImplementation("org.springframework.data:spring-data-geode-test:0.0.1.M3")
 }
 
 dependencyManagement {
