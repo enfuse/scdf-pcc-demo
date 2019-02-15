@@ -28,18 +28,16 @@ public class GeodeListener {
 
     @StreamListener(Processor.INPUT)
     @SendTo(Processor.OUTPUT)
-    public String handle(String message) {
+    public ExampleEntity handle(String message) {
         JSONObject jsonMessage = new JSONObject(message);
 
-        Optional<ExampleEntity> resultValue = exampleRepository.findById(1L);
+        Optional<ExampleEntity> exampleEntity = exampleRepository.findById(Long.valueOf((String) jsonMessage.get("id")));
 
-        resultValue.ifPresent(exampleEntity ->
-        {
-            logger.info("************************" + exampleEntity.getValue());
-        });
+        exampleEntity.ifPresent(entity ->
+                logger.info("************************" + entity.toString()));
 
-//        logger.info("***" + jsonMessage.get("value") + "***");
-        return message + resultValue.get().getValue();
+        return exampleEntity.orElse(new ExampleEntity());
+
     }
 
 }

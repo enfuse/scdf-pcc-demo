@@ -1,7 +1,6 @@
 package io.enfuse.pipeline.geode.geodestreamprocessor.listener;
 
 import io.enfuse.pipeline.geode.geodestreamprocessor.domain.ExampleEntity;
-import io.enfuse.pipeline.geode.geodestreamprocessor.domain.ExampleRepository;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
@@ -11,14 +10,13 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.util.RegionUtils;
@@ -30,9 +28,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 
-//import static org.hamcrest.MatcherAssert.assertThat;
-//import static org.hamcrest.core.Is.is;
-//import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
@@ -98,8 +93,8 @@ public class GeodeListenerIntegrationTest {
 
     @Test
     public void handle_givenString_sendsString() throws JSONException {
-        String payloadOne = "{\"value\":\"foo\"}";
-        String payloadTwo = "{\"value\":\"bar\"}";
+        String payloadOne = "{\"id\":\"1\", \"value\":\"foo\"}";
+        String payloadTwo = "{\"id\":\"2\", \"value\":\"bar\"}";
 
 
         this.processor.input().send(new GenericMessage<>(payloadOne));
@@ -118,6 +113,7 @@ public class GeodeListenerIntegrationTest {
 
     @SpringBootApplication
     @EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
+    @ComponentScan("io.enfuse.pipeline.geode.geodestreamprocessor")
     static class TestConfiguration {
 
         @Bean("exampleRegion")

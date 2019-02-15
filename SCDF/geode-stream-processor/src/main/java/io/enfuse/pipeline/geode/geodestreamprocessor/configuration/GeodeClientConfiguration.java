@@ -6,13 +6,14 @@ import org.apache.geode.cache.RegionShortcut;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.config.annotation.*;
 import org.springframework.data.gemfire.repository.config.EnableGemfireRepositories;
 import org.springframework.data.gemfire.support.ConnectionEndpoint;
 
 import java.util.Collections;
 
+@Profile("!integration")
 @ClientCacheApplication
 @EnableEntityDefinedRegions(basePackageClasses = ExampleEntity.class,
         clientRegionShortcut = ClientRegionShortcut.PROXY,
