@@ -1,24 +1,19 @@
 package io.enfuse.pipeline.geode.geodestreamprocessor.listener;
 
 import io.enfuse.pipeline.geode.geodestreamprocessor.domain.ExampleEntity;
-import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
-import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
@@ -36,7 +31,7 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newI
 @ActiveProfiles("integration")
 public class GeodeListenerIntegrationTest {
 
-    private static final String GEMFIRE_LOG_LEVEL = "error";
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 //    @Autowired
 //    private ExampleRepository exampleRepository;
@@ -72,29 +67,29 @@ public class GeodeListenerIntegrationTest {
         ExampleEntity exampleThree = new ExampleEntity();
         ExampleEntity exampleFour = new ExampleEntity();
 
-        exampleOne.setId(1L);
+        exampleOne.setId("1");
         exampleOne.setValue("example one value");
 
-        exampleTwo.setId(2L);
+        exampleTwo.setId("2");
         exampleTwo.setValue("example two value");
 
-        exampleThree.setId(3L);
+        exampleThree.setId("3");
         exampleThree.setValue("example three value");
 
-        exampleFour.setId(4L);
+        exampleFour.setId("4");
         exampleFour.setValue("example four value");
 
 
-        example.put(1L, exampleOne);
-        example.put(2L, exampleTwo);
-        example.put(3L, exampleThree);
-        example.put(4L, exampleFour);
+        example.put("1", exampleOne);
+        example.put("2", exampleTwo);
+        example.put("3", exampleThree);
+        example.put("4", exampleFour);
     }
 
     @Test
     public void handle_givenString_sendsString() throws JSONException {
-        String payloadOne = "{\"id\":\"1\", \"value\":\"foo\"}";
-        String payloadTwo = "{\"id\":\"2\", \"value\":\"bar\"}";
+        String payloadOne = "{\"id\":\"1\"}";
+        String payloadTwo = "{\"id\":\"2\"}";
 
 
         this.processor.input().send(new GenericMessage<>(payloadOne));
@@ -102,30 +97,24 @@ public class GeodeListenerIntegrationTest {
 
         BlockingQueue<Message<?>> messages = messageCollector.forChannel(processor.output());
 
-        for(Message message : messages) {
-            System.out.println(message.getPayload());
+        for (Message message : messages) {
+            logger.info(message.getPayload().toString());
         }
 
-//        assertThat(messages, receivesPayloadThat(is(payloadOne)));
-//        assertThat(messages, receivesPayloadThat(is(payloadTwo)));
+        assertThat(messages.contains(payloadOne));
+        assertThat(messages.contains(payloadTwo));
+
 
     }
 
-    @SpringBootApplication
-    @EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-    @ComponentScan("io.enfuse.pipeline.geode.geodestreamprocessor")
-    static class TestConfiguration {
+    @Test
+    public void handle_givenPayloadWithValidId_returnsPayload() {
+        String CLIENT_VALID_PAYLOAD_ONE = "{\"id\":\"1\"}";
+        String VALID_CACHE_PAYLOAD_ONE = "{\"id\":\"1\",\"value\":\"example one value\"}";
 
-        @Bean("exampleRegion")
-        public ClientRegionFactoryBean<Object, Object> exampleRegion(GemFireCache gemfireCache) {
+        processor.input().send(new GenericMessage<>(CLIENT_VALID_PAYLOAD_ONE));
+        GenericMessage<String> result = (GenericMessage<String>) messageCollector.forChannel(processor.output()).poll();
+        assertThat(result.getPayload()).isEqualTo(VALID_CACHE_PAYLOAD_ONE);
 
-            ClientRegionFactoryBean<Object, Object> clientRegion = new ClientRegionFactoryBean<>();
-
-            clientRegion.setCache(gemfireCache);
-            clientRegion.setClose(false);
-            clientRegion.setShortcut(ClientRegionShortcut.LOCAL);
-
-            return clientRegion;
-        }
     }
 }

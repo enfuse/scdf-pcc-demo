@@ -1,12 +1,9 @@
 package io.enfuse.pipeline.geode.geodestreamprocessor.domain;
 
-import org.springframework.data.gemfire.mapping.annotation.ClientRegion;
-import org.springframework.data.gemfire.repository.query.annotation.Trace;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.gemfire.mapping.annotation.Region;
+import org.springframework.data.gemfire.repository.GemfireRepository;
 
-@ClientRegion("exampleRegion")
-public interface ExampleRepository extends CrudRepository<ExampleEntity, Long> {
+@Region("exampleRegion")
+public interface ExampleRepository extends GemfireRepository<ExampleEntity, String> {
 
-    @Trace
-    ExampleEntity findOneById(Long id);
 }

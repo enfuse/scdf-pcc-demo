@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
@@ -29,6 +30,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("integration")
 @SpringBootTest
+@ComponentScan("io.enfuse.pipeline.geode.geodestreamprocessor")
+
 public class GeodeClientIntegrationTest {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -59,24 +62,24 @@ public class GeodeClientIntegrationTest {
         ExampleEntity exampleThree = new ExampleEntity();
         ExampleEntity exampleFour = new ExampleEntity();
 
-        exampleOne.setId(1L);
+        exampleOne.setId("1");
         exampleOne.setValue(EXAMPLE_ONE_VALUE);
 
-        exampleTwo.setId(2L);
+        exampleTwo.setId("2");
         exampleTwo.setValue(EXAMPLE_TWO_VALUE);
 
-        exampleThree.setId(3L);
+        exampleThree.setId("3");
         exampleThree.setValue(EXAMPLE_THREE_VALUE);
 
-        exampleFour.setId(4L);
+        exampleFour.setId("4");
         exampleFour.setValue(EXAMPLE_FOUR_VALUE);
 
         example = this.clientCache.getRegion("exampleRegion");
 
-        example.put(1L, exampleOne);
-        example.put(2L, exampleTwo);
-        example.put(3L, exampleThree);
-        example.put(4L, exampleFour);
+        example.put("1", exampleOne);
+        example.put("2", exampleTwo);
+        example.put("3", exampleThree);
+        example.put("4", exampleFour);
 
     }
 
@@ -95,40 +98,18 @@ public class GeodeClientIntegrationTest {
 
     @Test
     public void clientCacheContainsSetupData() {
-
-
         assertThat(example).isNotNull();
         assertThat(example.getName()).isEqualTo("exampleRegion");
         assertThat(example.getFullPath()).isEqualTo(RegionUtils.toRegionPath("exampleRegion"));
-
-        assertThat(example.get(1L).getValue()).isEqualTo("example one value");
-        assertThat(example.get(2L).getValue()).isEqualTo("example two value");
-
+        assertThat(example.get("1").getValue()).isEqualTo("example one value");
+        assertThat(example.get("2").getValue()).isEqualTo("example two value");
     }
-
-    @Test
-    public void repositoryReturnsExpectedValuesFromClientCache() {
-        String valueOneToCheck = exampleRepository.findById(1L)
-                .orElse(new ExampleEntity()).getValue();
-        assertThat(valueOneToCheck).isEqualTo(EXAMPLE_ONE_VALUE);
-
-        String valueTwoToCheck = exampleRepository.findById(2L)
-                .orElse(new ExampleEntity()).getValue();
-        assertThat(valueTwoToCheck).isEqualTo(EXAMPLE_TWO_VALUE);
-
-        String valueThreeToCheck = exampleRepository.findById(3L)
-                .orElse(new ExampleEntity()).getValue();
-        assertThat(valueThreeToCheck).isEqualTo(EXAMPLE_THREE_VALUE);
-    }
-
 
     @Test
     public void streamListenerTakesMessageWithIdAndReturnsCachedValue() throws JSONException {
-
-        String payloadOne = "{\"id\":\"1\", \"value\":\"foo\"}";
-        String payloadTwo = "{\"id\":\"2\", \"value\":\"foo\"}";
+        String payloadOne = "{\"id\":\"1\"}";
+        String payloadTwo = "{\"id\":\"2\"}";
         String payloadThree = "{\"id\":\"3\"}";
-
 
         this.processor.input().send(new GenericMessage<>(payloadOne));
         this.processor.input().send(new GenericMessage<>(payloadTwo));
@@ -139,14 +120,6 @@ public class GeodeClientIntegrationTest {
 
             logger.info(message.toString());
         }
-        // assertThat(messages, receivesPayloadThat(is()))
-//        assertThat(messages, receivesPayloadThat(is(payloadOne)));
-//        assertThat(messages, receivesPayloadThat(is(payloadTwo)));
-    }
-
-    @Test
-    public void testOQLQueryOutput() {
-        exampleRepository.findOneById(1L);
     }
 
 }

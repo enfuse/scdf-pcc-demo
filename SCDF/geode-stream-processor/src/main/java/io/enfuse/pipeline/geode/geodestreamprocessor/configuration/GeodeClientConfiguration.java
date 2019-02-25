@@ -21,7 +21,7 @@ import java.util.Collections;
 @EnableGemfireRepositories(basePackageClasses = ExampleRepository.class)
 //@ComponentScan(basePackageClasses = CustomerService.class)
 @EnableIndexing
-@EnableClusterConfiguration(useHttp = true)
+//@EnableClusterConfiguration(useHttp = true)
 public class GeodeClientConfiguration {
     @Bean
     ClientCacheConfigurer clientCacheServerConfigurer(
