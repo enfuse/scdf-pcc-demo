@@ -40,7 +40,7 @@ createCurlCommand(){
     ID_STRING=${ID}-$((ID+100))
 
     # use id to create simple json payload
-    PAYLOAD="{\\\"value\\\":\\\"value$ID\\\"}"
+    PAYLOAD="{\\\"id\\\":\\\"$ID_STRING\\\",\\\"value\\\":\\\"value$ID\\\"}"
 
     # append generated ID_STRING to base curl command
     CURL_COMMAND=${CURL_STRING}${ID_STRING}
