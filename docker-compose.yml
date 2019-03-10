@@ -49,6 +49,20 @@ services:
       - "15672:15672"
       - "5672:5672"
 
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter
+    container_name: rabbitmq-exporter
+    depends_on: [dns, rabbitmq]
+    dns: [172.19.0.2]
+    networks:
+      default:
+        aliases: [rabbitmq-exporter.localhost]
+    ports:
+      - "9419:9419"
+    environment:
+      - "PUBLISH_PORT=9419"
+      - "RABBIT_URL=http://rabbitmq.localhost:15672"
+
   locator:
     image: apachegeode/geode
     container_name: locator
@@ -126,6 +140,10 @@ services:
       - spring.datasource.password=scdf
       - spring.datasource.driver-class-name=org.postgresql.Driver
 
+      - spring.cloud.dataflow.applicationProperties.stream.management.metrics.export.prometheus.enabled=true
+      - spring.cloud.dataflow.applicationProperties.stream.spring.cloud.streamapp.security.enabled=false
+      - spring.cloud.dataflow.applicationProperties.stream.management.endpoints.web.exposure.include=prometheus,info,health
+
   scdf-config:
     image: alpine
     depends_on: [dns, scdf]
@@ -133,3 +151,34 @@ services:
     volumes:
       - ./docker:/docker
     command: docker/scdf/setup.sh
+
+  prometheus:
+    image: prom/prometheus
+    depends_on: [dns, scdf, rabbitmq-exporter]
+    dns: [172.19.0.2]
+    container_name: prometheus
+    networks:
+      default:
+        aliases: [prometheus.localhost]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    depends_on: [dns, prometheus]
+    dns: [172.19.0.2]
+    networks:
+      default:
+        aliases: [grafana.localhost]
+    volumes:
+      - ./docker/grafana/datasources/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    ports:
+    - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false

@@ -3,8 +3,11 @@ package io.enfuse.pipeline.geode.geodestreamprocessor.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
+import java.util.Objects;
+
 @Region("exampleRegion")
 public class ExampleEntity {
+
     @Id
     private String id;
 
@@ -33,6 +36,19 @@ public class ExampleEntity {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExampleEntity that = (ExampleEntity) o;
+        return getId().equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
     @Override

@@ -7,6 +7,13 @@ spring:
     username: guest
     password: guest
 
+  data:
+    geode:
+      locator:
+        host: locator.localhost
+        port: 10334
+
 logging:
   level:
+    org.springframework.boot.autoconfigure: ERROR
     io.enfuse.pipeline.geode.geodestreamprocessor: DEBUG
