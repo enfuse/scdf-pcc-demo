@@ -24,7 +24,7 @@ NUMBER_TO_GENERATE=${2:-100}
 REGION_NAME=${3:-"exampleRegion"}
 
 # base curl command to build on
-CURL_STRING="curl -i -H 'Content-Type: application/json' -X PUT localhost:7071/gemfire-api/v1/${REGION_NAME}/"
+CURL_STRING="curl -sS -i -H 'Content-Type: application/json' -X PUT localhost:7071/gemfire-api/v1/${REGION_NAME}/"
 
 # createCurlCommand()
 #
@@ -46,9 +46,9 @@ createCurlCommand() {
   CURL_COMMAND=${CURL_STRING}${ID_STRING}
 
   # evaluate to execute generated CURL_COMMAND with PAYLOAD
-  eval ${CURL_COMMAND} -d \"${PAYLOAD}\"
-
-  echo ${CURL_COMMAND} -d \"${PAYLOAD}\"
+  eval ${CURL_COMMAND} -d \"${PAYLOAD}\" > /dev/null
+    eval echo ${PAYLOAD}
+  # echo ${CURL_COMMAND} -d \"${PAYLOAD}\"
 }
 
 # calculate end of range

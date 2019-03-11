@@ -39,8 +39,8 @@ createCurlCommand() {
   PAYLOAD="{\\\"id\\\":\\\"$ID_STRING\\\"}"
 
   # evaluate to execute curl with PAYLOAD
-  eval ${CURL_STRING} -d \"${PAYLOAD}\" # > /dev/null
-
+  eval ${CURL_STRING} -d \"${PAYLOAD}\"  > /dev/null
+  eval echo ${PAYLOAD}
    #echo ${CURL_COMMAND} -d \"${PAYLOAD}\"
 }
 
