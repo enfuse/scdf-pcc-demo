@@ -1,0 +1,19 @@
+server:
+  port: 0
+spring:
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+  data:
+    geode:
+      locator:
+        host: locator.localhost
+        port: 10334
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure: ERROR
+    io.enfuse.pipeline.geode.geodestreamprocessor: DEBUG

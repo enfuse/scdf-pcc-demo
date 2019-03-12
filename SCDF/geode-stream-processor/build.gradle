@@ -1,0 +1,60 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'io.enfuse.pipeline.geode'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/libs-snapshot'}
+}
+
+ext {
+    set('springCloudVersion', 'Greenwich.RELEASE')
+    geodeStarterVersion = '1.0.0.M3'
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.cloud:spring-cloud-stream")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.0.7")
+    implementation("org.springframework.cloud:spring-cloud-stream-binder-rabbit")
+    implementation("org.springframework.geode:spring-geode-starter:${geodeStarterVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.cloud:spring-cloud-stream-test-support")
+    //testImplementation("org.springframework.amqp:spring-rabbit-junit:2.1.3.RELEASE")
+    //testImplementation("org.springframework.data:spring-data-geode-test:0.0.1.M3")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        exclude group: "com.jayway.jsonpath", module:"json-path"
+        exclude group: "org.skyscreamer", module:"jsonassert"
+    }
+}

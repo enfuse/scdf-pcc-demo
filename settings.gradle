@@ -1,1 +1,2 @@
 rootProject.name = 'scdf-pcc-demo'
+include 'SCDF/geode-stream-processor'

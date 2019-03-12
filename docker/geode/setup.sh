@@ -9,16 +9,16 @@ while ! nc -zw2 server.localhost 7070 &>/dev/null; do
 done
 
 curl -i -H 'Content-Type: application/json' -X PUT ${GEODE_SERVER_URL}/gemfire-api/v1/exampleRegion/1 \
-    -d "{\"keyOne\":1,\"keyTwo\":2,\"value\":100}"
+    -d "{\"id\":\"1\",\"value\":\"Example Value One\"}"
 
 curl -i -H 'Content-Type: application/json' -X PUT ${GEODE_SERVER_URL}/gemfire-api/v1/exampleRegion/2 \
-    -d "{\"keyOne\":3,\"keyTwo\":4,\"value\":101}"
+    -d "{\"id\":\"2\",\"value\":\"Example Value Two\"}"
 
 curl -i -H 'Content-Type: application/json' -X PUT ${GEODE_SERVER_URL}/gemfire-api/v1/exampleRegion/3 \
-    -d "{\"keyOne\":5,\"keyTwo\":6,\"value\":102}"
+    -d "{\"id\":\"3\",\"value\":\"Example Value Three\"}"
 
 curl -i -H 'Content-Type: application/json' -X PUT ${GEODE_SERVER_URL}/gemfire-api/v1/exampleRegion/4 \
-    -d "{\"keyOne\":7,\"keyTwo\":8,\"value\":103}"
+    -d "{\"id\":\"4\",\"value\":\"Example Value Four\"}"
 
 curl -i -H 'Content-Type: application/json' -X PUT ${GEODE_SERVER_URL}/gemfire-api/v1/exampleRegion/5 \
-    -d "{\"keyOne\":9,\"keyTwo\":10,\"value\":104}"
+    -d "{\"id\":\"5\",\"value\":\"Example Value Five\"}"
